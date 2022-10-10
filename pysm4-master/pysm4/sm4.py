@@ -23,10 +23,10 @@ else:
     PY3 = True
 
 if PY2:
-    _range = xrange
+    """ _range = xrange
     string_types = (basestring,)
     text_type = unicode
-    binary_type = str
+    binary_type = str """
 else:
     _range = range
     string_types = (str,)
@@ -35,7 +35,7 @@ else:
 
 E_FMT = 'UTF8'
 
-# S盒
+# S-Box
 S_BOX = {
     0X00: 0XD6, 0X01: 0X90, 0X02: 0XE9, 0X03: 0XFE, 0X04: 0XCC, 0X05: 0XE1, 0X06: 0X3D, 0X07: 0XB7,
     0X08: 0X16, 0X09: 0XB6, 0X0A: 0X14, 0X0B: 0XC2, 0X0C: 0X28, 0X0D: 0XFB, 0X0E: 0X2C, 0X0F: 0X05,
