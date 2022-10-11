@@ -1,21 +1,21 @@
-from aes import AES
+from sm4 import *
 import os, os.path
 import random
 class AES_GENERATE_FILES():
     def create_open_individual(self,path,filename,mode):
         files = list()
-        for i in range(1,11):
+        for i in range(1,33):
             os.makedirs(os.path.dirname(path+str(i)+"RoundOutput/"+filename), exist_ok=True)
             files.append(open(path+str(i)+"RoundOutput/"+filename, mode))
         return files
     def create_open_combined(self,path,mode):
         files = list()
-        for i in range(1,11):
+        for i in range(1,33):
             os.makedirs(os.path.dirname(path+str(i)+"RoundCombinedOutput"), exist_ok=True)
             files.append(open(path+str(i)+"RoundCombinedOutput", mode))
         return files
     def __init__(self):
-        print("\033[1;33mAES-128\tECB MODE WITH NONCE\tONLY COMBINED FILES\033[0m")
+        print("\033[1;33mSM4\tECB MODE WITH NONCE\tONLY COMBINED FILES\033[0m")
         print("\033[1;32mEncryption Started\033[0m")
         data_file = open("data.csv","w")
         data_file.write("Ciphertext File,Key,Plaintext File\n")
@@ -35,7 +35,6 @@ class AES_GENERATE_FILES():
                         zero=0
                         key += zero.to_bytes(16-len_key, 'big') 
                     key = int.from_bytes(key, "big")
-                    self.AES = AES(key)
                     #print("Key : "+str(hex(key)))
                     path_plaintext= "plaintext_files/"
                     for plaintext_files in [path_plaintext+f for f in os.listdir(path_plaintext) if os.path.isfile(os.path.join(path_plaintext,f))]:
@@ -53,18 +52,18 @@ class AES_GENERATE_FILES():
                                     zero=0
                                     plaintext += zero.to_bytes(16-len_pt, 'big') 
                                 plaintext = int.from_bytes(plaintext, "big") ^ int.from_bytes(random.randbytes(16), "big")
-                                ciphertext = self.AES.encrypt(plaintext)
-                                for i in range(0,10):
+                                ciphertext = encrypt(plaintext,key)
+                                for i in range(0,32):
                                     #ciphertext_file[i].write(ciphertext[i].to_bytes(16, 'big'))
                                     ciphertext_file_combined[i].write(ciphertext[i].to_bytes(16, 'big'))
                                 #print("Plaintext : "+str(hex(plaintext)))
                                 #print("Ciphertext : "+str(hex(ciphertext)))
                             cipher_file_no+=1
-                            '''for i in range(0,10):
+                            '''for i in range(0,32):
                                 ciphertext_file[i].close()'''  
                         #print("\033[1;32mFinished\033[0m for Plaintext File : "+plaintext_files)
             print("\033[1;32mFinished\033[0m for Key File : "+key_files)
-        for i in range(0,10):
+        for i in range(0,32):
             ciphertext_file_combined[i].close()
         data_file.close()
         print("\033[1;32mEncryption Finished\033[0m")

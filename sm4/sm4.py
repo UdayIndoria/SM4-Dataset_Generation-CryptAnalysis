@@ -225,43 +225,32 @@ def _round_f(byte4_array, rk):
     return x0 ^ _rep_t(x1 ^ x2 ^ x3 ^ rk)
 
 
-def _crypt(num, mk, mode=SM4_ENCRYPT):
-    """
-    SM4加密和解密
-    :param num: 密文或明文 16byte
-    :param mk:  密钥 16byte
-    :param mode: 轮密钥顺序
-    """
+'''def _crypt(num, mk, mode=SM4_ENCRYPT):
     x_keys = list(_byte_unpack(num, byte_n=16))
     round_keys = _round_keys(mk)
     if mode == SM4_DECRYPT:
         round_keys = round_keys[::-1]
     for i in _range(32):
         x_keys.append(_round_f(x_keys[i:i+4], round_keys[i]))
-    return _byte_pack(x_keys[-4:][::-1], byte_n=16)
+    return _byte_pack(x_keys[-4:][::-1], byte_n=16)'''
 
 
 def encrypt(clear_num, mk):
-    """
-    SM4加密算法由32次迭代运算和1次反序变换R组成.
-    明文输入为(X0, X1, X2, X3), 每一项4byte, 密文输出为(Y0, Y1, Y2, Y3), 每一项4byte
-    轮密钥为rki, i=0,1,...,32, 4byte, 运算过程如下:
-    1). 32次迭代运算: Xi+4 = F(Xi, Xi+1, Xi+2, Xi+3, rki), i=0,1,...,32
-    2). 反序变换: (Y0, Y1, Y2, Y3) = (X35, X34, X33, X32)
-    :param clear_num: 明文, 16byte
-    :param mk: 密钥, 16byte
-    """
-    return _crypt(num=clear_num, mk=mk)
+    x_keys = list(_byte_unpack(clear_num, byte_n=16))
+    round_keys = _round_keys(mk)
+    round_outputs_32 = []
+    for i in _range(32):
+        x_keys.append(_round_f(x_keys[i:i+4], round_keys[i]))
+        round_outputs_32.append(_byte_pack(x_keys[-4:][::-1], byte_n=16))
+    return round_outputs_32
 
 
 def decrypt(cipher_num, mk):
-    """
-    SM4解密算法, 解密变换与加密变换结构相同, 不同的仅是轮密钥的使用顺序.
-    解密时轮密钥使用顺序为(rk31,rk30,...,rk0)
-    :param cipher_num: 密文, 16byte
-    :param mk: 密钥, 16byte
-    """
-    return _crypt(num=cipher_num, mk=mk, mode=SM4_DECRYPT)
+    x_keys = list(_byte_unpack(cipher_num, byte_n=16))
+    round_keys = _round_keys(mk)[::-1]
+    for i in _range(32):
+        x_keys.append(_round_f(x_keys[i:i+4], round_keys[i]))
+    return _byte_pack(x_keys[-4:][::-1], byte_n=16)
 
 
 def _padding(text, mode=SM4_ENCRYPT):
