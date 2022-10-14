@@ -241,7 +241,10 @@ def encrypt(clear_num, mk):
     round_outputs_32 = []
     for i in _range(32):
         x_keys.append(_round_f(x_keys[i:i+4], round_keys[i]))
-        round_outputs_32.append(_byte_pack(x_keys[-4:][::-1], byte_n=16))
+        if i==31:
+            round_outputs_32.append(_byte_pack(x_keys[-4:][::-1], byte_n=16))
+        else:
+            round_outputs_32.append(_byte_pack(x_keys[-4:], byte_n=16))
     return round_outputs_32
 
 
