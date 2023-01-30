@@ -243,9 +243,9 @@ def encrypt(clear_num, mk, num_rounds):
         if num_rounds==i:
             break
     if num_rounds==31:
-        return _byte_pack(x_keys[-4:][::-1], byte_n=16) , x_keys[num_rounds]
+        return _byte_pack(x_keys[-4:][::-1], byte_n=16) , round_keys[num_rounds]
     else:
-        return _byte_pack(x_keys[-4:], byte_n=16) , x_keys[num_rounds]
+        return _byte_pack(x_keys[-4:], byte_n=16) , round_keys[num_rounds]
 
 
 """ def encrypt(clear_num, mk):
